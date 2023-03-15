@@ -1,4 +1,5 @@
 module SLEEF
+using Requires
 
 # export ldexp, sqrt, cbrt, pow,
 #    log, log2, log10, log1p, ilogb, exp, exp2, exp10, expm1, 
@@ -97,6 +98,9 @@ include("trig.jl")   # trigonometric and inverse trigonometric functions
 include("hyp.jl")    # hyperbolic and inverse hyperbolic functions
 include("misc.jl")   # miscallenous math functions including pow and cbrt
 
+include("VectorAPI.jl") # could become a lightweight package from which SIMD.jl depends
+include("vexp.jl")      # vectorized exponential functions
+
 # fallback definitions
 
 for func in (:sin, :cos, :tan, :sincos, :asin, :acos, :atan, :sinh, :cosh, :tanh,
@@ -115,5 +119,9 @@ for func in (:atan, :hypot)
     end
 end
 ldexp(x::Float16, q::Int) = Float16(ldexpk(Float32(x), q))
+
+function __init__()
+    @require SIMD="fdea26ae-647d-5447-a871-4b548cad5224" include("SIMD.jl")
+end
 
 end
